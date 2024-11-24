@@ -1,0 +1,148 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User ID
+        name:
+          type: string
+          description: User name
+        email:
+          type: string
+          format: email
+          description: User email
+        role:
+          type: string
+          enum: [user, admin]
+          description: User role
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        id: 5ebac534954b54139806c112
+        name: John Doe
+        email: john@example.com
+        role: user
+        createdAt: 2023-01-01T00:00:00.000Z
+
+    Blog:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Blog ID
+        title:
+          type: string
+          description: Blog title
+        content:
+          type: string
+          description: Blog content
+        author:
+          $ref: "#/components/schemas/User"
+        tags:
+          type: array
+          items:
+            type: string
+          description: Blog tags
+        status:
+          type: string
+          enum: [draft, published]
+          description: Blog status
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        id: 5ebac534954b54139806c113
+        title: Sample Blog Post
+        content: This is a sample blog post content
+        tags: [technology, programming]
+        status: published
+        createdAt: 2023-01-01T00:00:00.000Z
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Comment ID
+        content:
+          type: string
+          description: Comment content
+        author:
+          $ref: "#/components/schemas/User"
+        blog:
+          type: string
+          description: Blog ID
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        id: 5ebac534954b54139806c114
+        content: This is a sample comment
+        blog: 5ebac534954b54139806c113
+        createdAt: 2023-01-01T00:00:00.000Z
+
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token
+        expires:
+          type: string
+          format: date-time
+      example:
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        expires: 2023-01-01T00:30:00.000Z
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+        message:
+          type: string
+          description: Error message
+      example:
+        code: 400
+        message: Invalid request
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized access
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 401
+            message: Please authenticate
+
+    ForbiddenError:
+      description: Forbidden access
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 403
+            message: Forbidden
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 404
+            message: Resource not found
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

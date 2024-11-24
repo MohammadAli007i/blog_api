@@ -1,0 +1,82 @@
+/blogs/{blogId}/comments:
+  post:
+    tags: [Comments]
+    summary: Add a comment to a blog post
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: blogId
+        required: true
+        schema:
+          type: string
+        description: Blog ID
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [content]
+            properties:
+              content:
+                type: string
+    responses:
+      "201":
+        description: Comment added successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comment"
+      "404":
+        $ref: "#/components/responses/NotFoundError"
+      "401":
+        $ref: "#/components/responses/UnauthorizedError"
+
+  get:
+    tags: [Comments]
+    summary: Get all comments for a blog post
+    parameters:
+      - in: path
+        name: blogId
+        required: true
+        schema:
+          type: string
+        description: Blog ID
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: Page number
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+        description: Number of items per page
+    responses:
+      "200":
+        description: List of comments
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                results:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Comment"
+                page:
+                  type: integer
+                limit:
+                  type: integer
+                totalPages:
+                  type: integer
+                totalResults:
+                  type: integer
+      "404":
+        $ref: "#/components/responses/NotFoundError"
